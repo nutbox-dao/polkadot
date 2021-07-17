@@ -105,6 +105,8 @@ pub use pallet_balances::Call as BalancesCall;
 pub mod constants;
 use constants::{time::*, currency::*, fee::*, paras::*};
 
+use runtime_common::paras_sudo_wrapper;
+
 // Weights used in the runtime.
 mod weights;
 
@@ -1086,7 +1088,7 @@ impl parachains_ump::Config for Runtime {
 impl parachains_dmp::Config for Runtime {}
 
 impl parachains_hrmp::Config for Runtime {
-	type Event = Event;
+type Event = Event;
 	type Origin = Origin;
 	type Currency = Balances;
 }
@@ -1120,7 +1122,7 @@ impl paras_registrar::Config for Runtime {
 
 parameter_types! {
 	// 6 weeks
-	pub const LeasePeriod: BlockNumber = 6 * WEEKS;
+	pub const LeasePeriod: BlockNumber = 6 * HOURS;
 }
 
 impl slots::Config for Runtime {
@@ -1155,7 +1157,7 @@ impl crowdloan::Config for Runtime {
 parameter_types! {
 	// The average auction is 7 days long, so this will be 70% for ending period.
 	// 5 Days = 72000 Blocks @ 6 sec per block
-	pub const EndingPeriod: BlockNumber = 5 * DAYS;
+	pub const EndingPeriod: BlockNumber = 1 * HOURS;
 	// ~ 1000 samples per day -> ~ 20 blocks per sample -> 2 minute samples
 	pub const SampleLength: BlockNumber = 2 * MINUTES;
 }
@@ -1380,6 +1382,12 @@ impl pallet_gilt::Config for Runtime {
 	type WeightInfo = weights::pallet_gilt::WeightInfo<Runtime>;
 }
 
+impl paras_sudo_wrapper::Config for Runtime {}
+impl pallet_sudo::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+}
+
 construct_runtime! {
 	pub enum Runtime where
 		Block = Block,
@@ -1476,7 +1484,11 @@ construct_runtime! {
 		Crowdloan: crowdloan::{Pallet, Call, Storage, Event<T>} = 73,
 
 		// Pallet for sending XCM.
-		XcmPallet: pallet_xcm::{Pallet, Call, Storage, Event<T>} = 99,
+		XcmPallet: pallet_xcm::{Pallet, Call, Storage, Event<T>, Origin} = 99,
+
+        // Sudo
+        ParasSudoWrapper: paras_sudo_wrapper::{Pallet, Call},
+        Sudo: pallet_sudo::{Pallet, Call, Storage, Event<T>, Config<T>},
 	}
 }
 

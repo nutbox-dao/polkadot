@@ -90,6 +90,7 @@ xcm-executor = { package = "xcm-executor", path = "../../xcm/xcm-executor", defa
 xcm-builder = { package = "xcm-builder", path = "../../xcm/xcm-builder", default-features = false }
 
 max-encoded-len = { git = "https://github.com/paritytech/substrate", default-features = false , branch = "polkadot-v0.9.7" }
+pallet-sudo = { git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.7", default-features = false }
 
 [dev-dependencies]
 hex-literal = "0.3.1"
@@ -178,6 +179,7 @@ std = [
 	"xcm-builder/std",
 	"max-encoded-len/std",
 	"frame-election-provider-support/std",
+	"pallet-sudo/std",
 ]
 runtime-benchmarks = [
 	"runtime-common/runtime-benchmarks",
